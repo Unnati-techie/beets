@@ -381,6 +381,27 @@ class LastGenrePluginTest(BeetsTestCase):
             },
             ("not ; configured | separator", "keep any, no-force"),
         ),
+        # 12 - fallback to original if (for whatever
+        # reason) EMPTY string genres were fetched.
+        # In that case the "not whitelisted original" is allowed to stay!
+        (
+            {
+                "force": True,
+                "keep_existing": True,
+                "source": "album",
+                "whitelist": True,
+                "fallback": "fallback genre",
+                "canonical": False,
+                "prefer_specific": False,
+            },
+            "not whitelisted original",
+            {
+                "track": None,
+                "album": ["", ""],
+                "artist": None,
+            },
+            ("not whitelisted original", "original fallback"),
+        ),
     ],
 )
 def test_get_genre(config_values, item_genre, mock_genres, expected_result):
